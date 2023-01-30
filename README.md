@@ -1,5 +1,5 @@
 ## Management System
-고객관리 시스템을 만들어 보는 프로젝트입니다.
+고객관리 시스템을 만들어 보는 프로젝트입니다.(jhkim)
 
 
 # Getting Started with Create React App
