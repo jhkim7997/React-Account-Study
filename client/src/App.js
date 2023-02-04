@@ -1,6 +1,7 @@
 //App.js
 import logo from './logo.svg';
 import './App.css';
+
 import Customer from './components/Customer';
 
 import Paper from '@material-ui/core/Paper';
@@ -12,7 +13,10 @@ import TableCell from '@material-ui/core/TableCell';
 
 import { withStyles } from '@material-ui/core/styles'; // 스타일 라이버러리
 
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Box from '@material-ui/core/Box';
 
+import React, { useState, useEffect } from 'react';
 const styles = theme => ({
   root: {
     width: '100%',
@@ -20,40 +24,30 @@ const styles = theme => ({
     overflowX: "auto"
 
   },
-  table:{
+  table: {
     minWidth: 1080
   }
 })
 
-//customer 객체를 생성 하여 prop값 전달
-const customers = [
-  {
-    id: 1,
-    image: 'https://placeimg.com/64/64/1',
-    name: '김두환',
-    birthday: '989797',
-    gender: '남자',
-    job: '건달'
-  },
-  {
-    id: 2,
-    image: 'https://placeimg.com/64/64/2',
-    name: '이두봉',
-    birthday: '559797',
-    gender: '남자',
-    job: '군인'
-  },
-  {
-    id: 3,
-    image: 'https://placeimg.com/64/64/3',
-    name: '이보희',
-    birthday: '779797',
-    gender: '여자',
-    job: '간호사'
-  }
-]
+
 function App(props) {
-  const {classes} = props;
+
+  //useState 사용하여 배열 선언
+  const [customers, setCustomers] = useState("");
+
+  //해당 서버에 접근해서 고객 정보를 customer에 담기 
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await fetch('/api/customer');
+      const result = res.json();
+      return result;
+    }
+    fetchData().then(res => setCustomers(res)
+    );
+   
+  }, []);
+  //customer 객체를 생성 하여 prop값 전달
+  const { classes } = props;
   return (
     <Paper className={classes.root}>
       <Table className={classes.table}>
@@ -68,7 +62,7 @@ function App(props) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {customers.map(c => {  //map을 이용해 배열의 값을 순차적으로 가져온다. 
+          {customers ? customers.map(c => {  //map을 이용해 배열의 값을 순차적으로 가져온다. 
             return <Customer
               key={c.id} //idx인덱스를 할당 해줘야 리액트에서는 경고가 뜨지 않음.
               id={c.id}
@@ -78,7 +72,14 @@ function App(props) {
               gender={c.gender}
               job={c.job}
             />;
-          })}
+          }): <TableRow>
+          <TableCell colSpan="6" align='center'>
+            <Box sx={{ display: 'flex' }}>
+              <CircularProgress />
+            </Box>
+          </TableCell>
+        </TableRow>}
+          
         </TableBody>
       </Table>
     </Paper>
