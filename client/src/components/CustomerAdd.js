@@ -2,7 +2,7 @@
 import React , {useState} from 'react';
 import Axios from 'axios'; //post방식으로 데이터 전달을 위해
 
-function CustomerAdd(){
+function CustomerAdd({onChangelist}){
 
     const [file,setFile] = useState(null); 
     const [userName,setUserName] = useState(""); 
@@ -16,8 +16,15 @@ function CustomerAdd(){
         addCustomer()
         .then((response) => {
             console.log(response.data);
+            onChangelist(); //App.js의 부모 함수 호출
         })
-    
+        setFile(null);
+        setUserName("");
+        setBirthday("");
+        setGender("");
+        setJob("");
+        setFileName("");
+
     }
 
     const handleFileChange = (e) => {
@@ -52,7 +59,6 @@ function CustomerAdd(){
             }
         }
         //axios post사용
-        
         return Axios.post(url, formData,config);
     }
 
@@ -69,6 +75,5 @@ function CustomerAdd(){
     );
 
 };
-
 
 export default CustomerAdd;

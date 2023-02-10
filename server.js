@@ -20,6 +20,10 @@ const connection = mysql.createConnection({
 connection.connect();
 //===================Mysql접속 ===================
 
+//===================fileUpload ===================
+const multer = require('multer'); //업로드 파일 이름을 자동으로 만들어준다.
+const upload = multer({dest: './upload'}); //upload폴더 경로
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
@@ -28,6 +32,8 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.get('/api/hello', (req, res) => {
   res.send('Hello World!')
 })
+
+
 //응답은 bodyParser.json()사용하여 알아서 json형태로 전달하게 만들었다.
 app.get('/api/customer', (req, res) => {
   //for(let i=0; i < 9999999999; i++){} //생각하는 시간
@@ -39,6 +45,30 @@ app.get('/api/customer', (req, res) => {
     }
   );
 
+});
+
+
+//사용자는 image경로로 접근을 하지만 실제로는 upload폴더이다. 
+app.use('/image', express.static('./upload'));
+// 이미지 업로드 및 데이터 베이스 insert
+app.post('/api/customers', upload.single('image'), (req, res) => {
+  let sql = 'INSERT INTO CUSTOMER VALUES (null, ?, ?, ?, ?, ?)';
+  let image = '/image/' + req.file.filename;
+  let name = req.body.name;
+  let birthday = req.body.birthday;
+  let gender = req.body.gender;
+  let job = req.body.job;
+  let params = [image, name, birthday, gender, job];
+
+  console.log(name);
+
+  connection.query(sql, params,
+    (err, rows, fields) => {
+      res.send(rows);
+     // console.log(err);
+     // console.log(rows);
+    }
+  );
 });
 
 app.listen(port, () => {

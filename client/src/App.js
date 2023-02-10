@@ -39,6 +39,12 @@ function App(props) {
 
   //해당 서버에 접근해서 고객 정보를 customer에 담기 
   useEffect(() => {
+    listSearch();
+   
+  }, []);
+
+  //리스트 조회 API호출
+  const listSearch = () => {
     const fetchData = async () => {
       const res = await fetch('/api/customer');
       const result = res.json();
@@ -46,8 +52,10 @@ function App(props) {
     }
     fetchData().then(res => setCustomers(res)
     );
-   
-  }, []);
+    };
+    
+
+
   //customer 객체를 생성 하여 prop값 전달
   const { classes } = props;
   return (
@@ -86,7 +94,7 @@ function App(props) {
           </TableBody>
         </Table>
       </Paper>
-      <CustomerAdd/>
+      <CustomerAdd onChangelist={listSearch()}/>
     </div>
   );
 }
