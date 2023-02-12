@@ -31,7 +31,6 @@ const styles = theme => ({
   }
 })
 
-
 function App(props) {
 
   //useState 사용하여 배열 선언
@@ -39,9 +38,15 @@ function App(props) {
 
   //해당 서버에 접근해서 고객 정보를 customer에 담기 
   useEffect(() => {
-    listSearch();
+    const fetchData = async () => {
+      const res = await fetch('/api/customer');
+      const result = res.json();
+      return result;
+    }
+    fetchData().then(res => setCustomers(res)
+    );
    
-  }, []);
+  },[]);
 
   //리스트 조회 API호출
   const listSearch = () => {
@@ -70,6 +75,7 @@ function App(props) {
               <TableCell>생년월일</TableCell>
               <TableCell>성별</TableCell>
               <TableCell>직업</TableCell>
+              <TableCell>설정</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -82,6 +88,7 @@ function App(props) {
                 birthday={c.birthday}
                 gender={c.gender}
                 job={c.job}
+                onChangelist={listSearch}
               />;
             }) : <TableRow>
               <TableCell colSpan="6" align='center'>
@@ -90,11 +97,10 @@ function App(props) {
                 </Box>
               </TableCell>
             </TableRow>}
-
           </TableBody>
         </Table>
       </Paper>
-      <CustomerAdd onChangelist={listSearch()}/>
+      <CustomerAdd onChangelist={listSearch}/>
     </div>
   );
 }

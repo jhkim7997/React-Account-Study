@@ -27,8 +27,6 @@ const upload = multer({dest: './upload'}); //upload폴더 경로
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
-
-
 app.get('/api/hello', (req, res) => {
   res.send('Hello World!')
 })
@@ -39,7 +37,7 @@ app.get('/api/customer', (req, res) => {
   //for(let i=0; i < 9999999999; i++){} //생각하는 시간
   // 쿼리로 데이터 접속하기
   connection.query(
-    "select * from customer",
+    "select * from customer where isDeleted = 0",
     (err,rows,fields) =>{
       res.send(rows);
     }
@@ -52,7 +50,7 @@ app.get('/api/customer', (req, res) => {
 app.use('/image', express.static('./upload'));
 // 이미지 업로드 및 데이터 베이스 insert
 app.post('/api/customers', upload.single('image'), (req, res) => {
-  let sql = 'INSERT INTO CUSTOMER VALUES (null, ?, ?, ?, ?, ?)';
+  let sql = 'INSERT INTO CUSTOMER VALUES (null, ?, ?, ?, ?, ?,NOW(),0)';
   let image = '/image/' + req.file.filename;
   let name = req.body.name;
   let birthday = req.body.birthday;
@@ -65,8 +63,21 @@ app.post('/api/customers', upload.single('image'), (req, res) => {
   connection.query(sql, params,
     (err, rows, fields) => {
       res.send(rows);
-     // console.log(err);
-     // console.log(rows);
+      //console.log(err);
+      //console.log(rows);
+    }
+  );
+});
+
+// 데이터 베이스 delete
+app.delete('/api/customers/:id',  (req, res) => {
+  let sql = 'UPDATE CUSTOMER SET isDeleted =1 WHERE id =?';
+  let params = [req.params.id];
+  connection.query(sql, params,
+    (err, rows, fields) => {
+      res.send(rows);
+      //console.log(err);
+      //console.log(rows);
     }
   );
 });

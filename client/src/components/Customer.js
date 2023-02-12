@@ -2,6 +2,7 @@
 import React from 'react';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
+import CustomerDelete from './CustomerDelete';
 
 const Customer = (customer) => {
 
@@ -13,6 +14,7 @@ const Customer = (customer) => {
             <TableCell>{customer.birthday}</TableCell>
             <TableCell>{customer.gender}</TableCell>
             <TableCell>{customer.job}</TableCell>
+            <TableCell><CustomerDelete delId={customer.id} onChangelist={customer.onChangelist}/></TableCell>
         </TableRow>
         
     );
